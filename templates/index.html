@@ -4,13 +4,91 @@
 
 <!-- Stats -->
 <div class="row g-3 mb-4">
+  {% set cards = [ ('Backlog', stats.backlog), ('Pending', stats.pending), ('In
+  Progress', stats['in-progress']), ('Completed', stats.completed) ] %} {% for
+  label, value in cards %}
+  <div class="col-6 col-md-3">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <small class="text-muted">{{ label }}</small>
+        <h3>{{ value }}</h3>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
 </div>
 
 <!-- Chart -->
 <div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <h5 class="mb-2">Task Distribution</h5>
+    <canvas id="taskChart"></canvas>
+  </div>
 </div>
 
 <!-- Grouped Tasks -->
 <div class="row g-4">
+  {% for status, items in tasks.items() %}
+  <div class="col-md-6 col-lg-3">
+    <h5 class="text-capitalize mb-3">{{ status }}</h5>
+
+    {% if items %} {% for task in items %}
+    <div class="card mb-2 shadow-sm">
+      <div class="card-body p-2">
+        <div class="d-flex justify-content-between align-items-start">
+          <strong>{{ task.title }}</strong>
+          <a
+            href="/delete/{{ task.id }}"
+            class="btn btn-sm btn-outline-danger text-red"
+          >
+            🗑 Delete
+          </a>
+        </div>
+
+        {% if task.category %}
+        <div class="small text-muted">{{ task.category }}</div>
+        {% endif %}
+
+        <div class="mt-2 d-flex gap-1 flex-wrap">
+          {% if status == 'backlog' %}
+          <a
+            href="/update_status/{{ task.id }}/pending"
+            class="btn btn-sm btn-primary"
+          >
+            Move to Pending
+          </a>
+          {% endif %} {% if status == 'pending' %}
+          <a
+            href="/update_status/{{ task.id }}/in-progress"
+            class="btn btn-sm btn-primary"
+          >
+            Start
+          </a>
+          {% endif %} {% if status == 'in-progress' %}
+          <a
+            href="/update_status/{{ task.id }}/completed"
+            class="btn btn-sm btn-success"
+          >
+            Complete
+          </a>
+          {% endif %} {% if status != 'completed' %}
+          <a
+            href="/update_status/{{ task.id }}/backlog"
+            class="btn btn-sm btn-secondary"
+          >
+            Reset
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %} {% else %}
+    <p class="text-muted small">No tasks</p>
+    {% endif %}
+  </div>
+  {% endfor %}
 </div>
+<script>
+  window.taskStats = JSON.parse('{{ stats | tojson | safe }}')
+</script>
 {% endblock %}
