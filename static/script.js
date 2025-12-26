@@ -40,4 +40,37 @@ if (chartCanvas && window.taskStats) {
   })
 }
 
-console.log(window.taskStats)
+const projectCanvas = document.getElementById('projectChart')
+
+  if (projectCanvas && window.taskStats) {
+    const ctx = projectCanvas.getContext('2d')
+
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Backlog', 'Pending', 'In Progress', 'Completed'],
+        datasets: [
+          {
+            data: [
+              window.taskStats.backlog,
+              window.taskStats.pending,
+              window.taskStats['in-progress'],
+              window.taskStats.completed,
+            ],
+            backgroundColor: ['#6c757d', '#0d6efd', '#ffc107', '#198754'],
+            borderWidth: 0,
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: 'bottom',
+          },
+        },
+        cutout: '65%',
+      },
+    })
+  }
+
+

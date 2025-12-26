@@ -34,7 +34,7 @@
 
     {% if stats.backlog or stats.pending or stats['in-progress'] or
     stats.completed %}
-    <canvas id="taskChart" height="130"></canvas>
+    <canvas id="projectChart" height="130"></canvas>
     {% else %}
     <div class="text-center py-5">
       <p class="text-muted mb-2">No projects available yet</p>
@@ -72,44 +72,7 @@
 </div>
 
 <!-- ===================== CHART DATA ===================== -->
-<!-- ===================== CHART DATA ===================== -->
 <script>
   window.taskStats = JSON.parse('{{ stats | tojson | safe }}')
 </script>
-
-<!-- ===================== CHART JS ===================== -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  if (document.getElementById('taskChart')) {
-    const ctx = document.getElementById('taskChart').getContext('2d')
-
-    new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Backlog', 'Pending', 'In Progress', 'Completed'],
-        datasets: [
-          {
-            data: [
-              window.taskStats.backlog,
-              window.taskStats.pending,
-              window.taskStats['in-progress'],
-              window.taskStats.completed,
-            ],
-            backgroundColor: ['#6c757d', '#0d6efd', '#ffc107', '#198754'],
-            borderWidth: 0,
-          },
-        ],
-      },
-      options: {
-        plugins: {
-          legend: {
-            position: 'bottom',
-          },
-        },
-        cutout: '65%',
-      },
-    })
-  }
-</script>
-
 {% endblock %}

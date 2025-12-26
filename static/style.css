@@ -167,6 +167,10 @@ nav {
   max-height: 220px;
 }
 
+#projectChart {
+  max-height: 220px;
+}
+
 /* ---------- Footer ---------- */
 footer {
   text-align: center;

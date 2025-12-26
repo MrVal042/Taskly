@@ -4,14 +4,15 @@
 
 <!-- ===================== STATS CARDS ===================== -->
 <div class="row g-3 mb-4">
-  {% set cards = [ ('Backlog', stats.backlog), ('Pending', stats.pending), ('In
-  Progress', stats['in-progress']), ('Completed', stats.completed) ] %} {% for
-  label, value in cards %}
+  {% set cards = [ ('Backlog', stats.backlog, 'secondary'), ('Pending',
+  stats.pending, 'primary'), ('In Progress', stats['in-progress'], 'warning'),
+  ('Completed', stats.completed, 'success') ] %} {% for label, value, color in
+  cards %}
   <div class="col-6 col-md-3">
-    <div class="card text-center shadow-sm">
-      <div class="card-body">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
         <small class="text-muted">{{ label }}</small>
-        <h3 class="fw-bold">{{ value }}</h3>
+        <h3 class="fw-bold text-{{ color }}">{{ value }}</h3>
       </div>
     </div>
   </div>
