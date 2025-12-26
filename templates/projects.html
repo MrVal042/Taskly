@@ -1,32 +1,115 @@
 {% extends "layout.html" %} {% block content %}
 
-<h2 class="mb-4">Projects Overview</h2>
-
-<p class="text-muted mb-4">
-  High-level view of task distribution across all projects.
-</p>
-
-<div class="card shadow-sm mb-4">
-  <div class="card-body">
-    <canvas id="taskChart" height="140"></canvas>
+<!-- ===================== HEADER ===================== -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="mb-1">Projects</h2>
+    <p class="text-muted mb-0">
+      Overview of project progress and task distribution
+    </p>
   </div>
 </div>
 
-<ul class="list-group">
-  <li class="list-group-item d-flex justify-content-between">
-    Backlog <span>{{ stats.backlog }}</span>
-  </li>
-  <li class="list-group-item d-flex justify-content-between">
-    Pending <span>{{ stats.pending }}</span>
-  </li>
-  <li class="list-group-item d-flex justify-content-between">
-    In Progress <span>{{ stats["in-progress"] }}</span>
-  </li>
-  <li class="list-group-item d-flex justify-content-between">
-    Completed <span>{{ stats.completed }}</span>
-  </li>
-</ul>
+<!-- ===================== STATS CARDS ===================== -->
+<div class="row g-3 mb-4">
+  {% set cards = [ ('Backlog', stats.backlog, 'secondary'), ('Pending',
+  stats.pending, 'primary'), ('In Progress', stats['in-progress'], 'warning'),
+  ('Completed', stats.completed, 'success') ] %} {% for label, value, color in
+  cards %}
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body text-center">
+        <small class="text-muted">{{ label }}</small>
+        <h3 class="fw-bold text-{{ color }}">{{ value }}</h3>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- ===================== CHART ===================== -->
+<div class="card shadow-sm mb-4 border-0">
+  <div class="card-body">
+    <h5 class="mb-3">Project Task Distribution</h5>
+
+    {% if stats.backlog or stats.pending or stats['in-progress'] or
+    stats.completed %}
+    <canvas id="taskChart" height="130"></canvas>
+    {% else %}
+    <div class="text-center py-5">
+      <p class="text-muted mb-2">No projects available yet</p>
+      <a href="/add" class="btn btn-outline-success"> + Create Project </a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ===================== SUMMARY ===================== -->
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <h6 class="mb-3">Summary</h6>
+
+    <div class="d-flex justify-content-between py-2 border-bottom">
+      <span class="text-muted">Total Tasks</span>
+      <strong>
+        {{ stats.backlog + stats.pending + stats['in-progress'] +
+        stats.completed }}
+      </strong>
+    </div>
+
+    <div class="d-flex justify-content-between py-2 border-bottom">
+      <span class="text-muted">Active Tasks</span>
+      <strong>
+        {{ stats.backlog + stats.pending + stats['in-progress'] }}
+      </strong>
+    </div>
+
+    <div class="d-flex justify-content-between py-2">
+      <span class="text-muted">Completed Tasks</span>
+      <strong class="text-success"> {{ stats.completed }} </strong>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CHART DATA ===================== -->
+<!-- ===================== CHART DATA ===================== -->
 <script>
   window.taskStats = JSON.parse('{{ stats | tojson | safe }}')
 </script>
+
+<!-- ===================== CHART JS ===================== -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  if (document.getElementById('taskChart')) {
+    const ctx = document.getElementById('taskChart').getContext('2d')
+
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Backlog', 'Pending', 'In Progress', 'Completed'],
+        datasets: [
+          {
+            data: [
+              window.taskStats.backlog,
+              window.taskStats.pending,
+              window.taskStats['in-progress'],
+              window.taskStats.completed,
+            ],
+            backgroundColor: ['#6c757d', '#0d6efd', '#ffc107', '#198754'],
+            borderWidth: 0,
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: 'bottom',
+          },
+        },
+        cutout: '65%',
+      },
+    })
+  }
+</script>
+
 {% endblock %}

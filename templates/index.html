@@ -2,7 +2,7 @@
 
 <h2 class="mb-4">Dashboard</h2>
 
-<!-- Stats -->
+<!-- ===================== STATS CARDS ===================== -->
 <div class="row g-3 mb-4">
   {% set cards = [ ('Backlog', stats.backlog), ('Pending', stats.pending), ('In
   Progress', stats['in-progress']), ('Completed', stats.completed) ] %} {% for
@@ -11,70 +11,89 @@
     <div class="card text-center shadow-sm">
       <div class="card-body">
         <small class="text-muted">{{ label }}</small>
-        <h3>{{ value }}</h3>
+        <h3 class="fw-bold">{{ value }}</h3>
       </div>
     </div>
   </div>
   {% endfor %}
 </div>
 
-<!-- Chart -->
+<!-- ===================== CHART ===================== -->
 <div class="card mb-4 shadow-sm">
   <div class="card-body">
-    <h5 class="mb-2">Task Distribution</h5>
+    <h5 class="mb-3">Task Distribution</h5>
+
+    {% if stats.backlog or stats.pending or stats['in-progress'] or
+    stats.completed %}
     <canvas id="taskChart"></canvas>
+    {% else %}
+    <div class="d-flex justify-content-center align-items-center gap-4 py-4">
+      <h6 class="mb-0 text-muted">No task or project added</h6>
+      <a href="/add" class="btn btn-outline-success">+ Add Task</a>
+    </div>
+    {% endif %}
   </div>
 </div>
 
-<!-- Grouped Tasks -->
+<!-- ===================== GROUPED TASKS ===================== -->
 <div class="row g-4">
   {% for status, items in tasks.items() %}
   <div class="col-md-6 col-lg-3">
-    <h5 class="text-capitalize mb-3">{{ status }}</h5>
+    <h5 class="text-capitalize mb-3">{{ status.replace('-', ' ') }}</h5>
 
     {% if items %} {% for task in items %}
     <div class="card mb-2 shadow-sm">
       <div class="card-body p-2">
         <div class="d-flex justify-content-between align-items-start">
           <strong>{{ task.title }}</strong>
-          <a
-            href="/delete/{{ task.id }}"
-            class="btn btn-sm btn-outline-danger text-red"
-          >
-            🗑 Delete
-          </a>
+
+          <!-- DELETE (POST, SAFE) -->
+          <form action="/delete/{{ task.id }}" method="post" class="d-inline">
+            <button
+              type="submit"
+              class="btn btn-sm btn-outline-danger"
+              onclick="return confirm('Delete this task?')"
+            >
+              🗑 Delete
+            </button>
+          </form>
         </div>
 
         {% if task.category %}
         <div class="small text-muted">{{ task.category }}</div>
         {% endif %}
 
+        <!-- STATUS ACTIONS -->
         <div class="mt-2 d-flex gap-1 flex-wrap">
           {% if status == 'backlog' %}
           <a
-            href="/update_status/{{ task.id }}/pending"
+            href="/update/{{ task.id }}/pending"
             class="btn btn-sm btn-primary"
+            method="post"
           >
             Move to Pending
           </a>
           {% endif %} {% if status == 'pending' %}
           <a
-            href="/update_status/{{ task.id }}/in-progress"
+            href="/update/{{ task.id }}/in-progress"
             class="btn btn-sm btn-primary"
+            method="post"
           >
             Start
           </a>
           {% endif %} {% if status == 'in-progress' %}
           <a
-            href="/update_status/{{ task.id }}/completed"
+            href="/update/{{ task.id }}/completed"
             class="btn btn-sm btn-success"
+            method="post"
           >
             Complete
           </a>
           {% endif %} {% if status != 'completed' %}
           <a
-            href="/update_status/{{ task.id }}/backlog"
+            href="/update/{{ task.id }}/backlog"
             class="btn btn-sm btn-secondary"
+            method="post"
           >
             Reset
           </a>
@@ -88,7 +107,10 @@
   </div>
   {% endfor %}
 </div>
+
+<!-- ===================== CHART DATA ===================== -->
 <script>
   window.taskStats = JSON.parse('{{ stats | tojson | safe }}')
 </script>
+
 {% endblock %}

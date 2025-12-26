@@ -89,8 +89,8 @@ def add():
 
     return render_template("add.html")
 
-@app.route("/update_status/<int:task_id>/<string:new_status>")
-def update_status(task_id, new_status):
+@app.route("/update/<int:task_id>/<string:new_status>")
+def update(task_id, new_status):
     if new_status not in ["backlog", "pending", "in-progress", "completed"]:
         return redirect(url_for("index"))
 
@@ -105,8 +105,8 @@ def update_status(task_id, new_status):
 
     return redirect(url_for("index"))
 
-@app.route("/delete/<int:task_id>")
-def delete_task(task_id):
+@app.route("/delete/<int:task_id>", methods=["POST"])
+def delete(task_id):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
