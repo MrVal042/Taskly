@@ -2,4 +2,31 @@
 
 <h2 class="mb-4">Projects Overview</h2>
 
+<p class="text-muted mb-4">
+  High-level view of task distribution across all projects.
+</p>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <canvas id="taskChart" height="140"></canvas>
+  </div>
+</div>
+
+<ul class="list-group">
+  <li class="list-group-item d-flex justify-content-between">
+    Backlog <span>{{ stats.backlog }}</span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between">
+    Pending <span>{{ stats.pending }}</span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between">
+    In Progress <span>{{ stats["in-progress"] }}</span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between">
+    Completed <span>{{ stats.completed }}</span>
+  </li>
+</ul>
+<script>
+  window.taskStats = JSON.parse('{{ stats | tojson | safe }}')
+</script>
 {% endblock %}
