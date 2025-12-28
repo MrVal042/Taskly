@@ -1,5 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
+import os
+import requests
 import sqlite3
+from helper import apology
+
 
 app = Flask(__name__)
 DB_NAME = "task.db"
@@ -121,6 +125,39 @@ def projects():
         "projects.html",
         stats=get_task_stats()
     )
+
+
+@app.route("/contact", methods=["POST"])
+def contact():
+    name = request.form.get("name")
+    email = request.form.get("email")
+    message = request.form.get("message")
+
+    if not name or not email or not message:
+        return apology("all fields required", 403)
+
+    script_url = os.environ.get("GOOGLE_SCRIPT_URL")
+    if not script_url:
+        return apology("service not configured", 500)
+
+    payload = {
+        "name": name,
+        "email": email,
+        "message": message
+    }
+
+    try:
+        response = requests.post(
+            script_url,
+            json=payload,
+            timeout=5
+        )
+        response.raise_for_status()
+    except requests.RequestException:
+        return apology("failed to send message", 500)
+
+    return render_template("success.html", name=name)
+
 
 @app.route("/about")
 def about():

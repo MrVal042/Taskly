@@ -1,29 +1,33 @@
 # Taskly – A Simple Task Management Dashboard
 
-#### Video Demo: https://youtu.be/YOUR_VIDEO_LINK
+#### Project Demo: [here in youtube](https://youtu.be/7UbNTLQl57Q)
 
 ## Description
 
-Taskly is a lightweight web-based task management application built using Flask, SQLite, HTML, CSS, JavaScript, and Bootstrap. The goal of this project is to provide a clean and intuitive interface for managing tasks across multiple states while demonstrating core concepts learned throughout CS50, including backend development, database design, templating, and frontend interactivity.
+Taskly is a lightweight web-based task management application built as a CS50x final project. It allows users to organize tasks into multiple workflow states and visualize progress through a clean, intuitive interface.
 
-The application allows users to create tasks, assign categories, track progress through different statuses, visualize task statistics, and manage their workload efficiently. Taskly is designed to be minimal yet extensible, focusing on clarity, usability, and correctness rather than unnecessary complexity.
+The project demonstrates core CS50 concepts, including Flask-based backend development, SQLite database design, Jinja templating, form handling, and frontend interactivity using JavaScript and Bootstrap.
+
+Users can create tasks, assign optional categories, update task status across predefined stages, view real-time task statistics, and submit messages via a contact form that integrates with Google Sheets.
 
 ---
 
 ## Features
 
-- Add new tasks with a title, category, and initial status
-- Automatically group tasks by status:
+- Create tasks with title, category, and initial status
+- Group tasks automatically by workflow state:
+
   - Backlog
   - Pending
   - In Progress
   - Completed
-- Update task status and mark tasks as completed
+
+- Update task status dynamically
 - Delete tasks
-- Dashboard showing real-time task statistics
+- Dashboard with real-time task statistics
 - Visual task distribution chart using Chart.js
-- Responsive layout optimized for mobile and desktop
-- Clean UI using Bootstrap and custom CSS
+- Responsive layout for desktop and mobile
+- Contact form that sends submissions to Google Sheets via a server-side HTTP request
 
 ---
 
@@ -32,59 +36,74 @@ The application allows users to create tasks, assign categories, track progress 
 ```bash
 project/
 │
-├── app.py
-├── task.db
-├── requirements.txt
+├── static/
+│   ├── script.js
+│   └── style.css
 │
 ├── templates/
-│   ├── layout.html
-│   ├── index.html
+│   ├── about.html
 │   ├── add.html
+│   ├── index.html
+│   ├── layout.html
 │   ├── projects.html
-│   └── about.html
+│   └── success.html
 │
-├── static/
-│   ├── style.css
-│   └── script.js
-│
-└── README.md
-
+├── .env
+├── .gitignore
+├── app.py
+├── helper.py
+├── LICENSE
+├── README.md
+├── requirements.txt
+└── task.db
 ```
 
 ---
 
-## Backend (Flask + SQLite)
+## Backend Implementation
 
-The backend is implemented using Flask. The database is SQLite and contains a single table called `tasks`. Each task has the following fields:
+The backend is built with Flask and uses SQLite for persistent storage. A single `tasks` table stores task data, including title, category, status, and creation timestamp.
 
-- `id`: unique identifier
-- `title`: task title
-- `category`: optional category
-- `status`: backlog, pending, in-progress, or completed
-- `created_at`: timestamp
+Helper functions are used to:
 
-Helper functions are used to fetch tasks, group them by status, and compute statistics. This logic is intentionally separated from the route handlers to keep the code clean and maintainable.
+- Retrieve tasks from the database
+- Group tasks by status
+- Compute task statistics for display
+
+This separation of concerns keeps route handlers concise and improves maintainability.
 
 ---
 
-## Frontend (HTML, CSS, JavaScript)
+## Frontend Implementation
 
-The frontend uses Jinja templates for rendering dynamic data. Bootstrap provides a responsive grid system and consistent styling, while custom CSS enhances layout and branding.
+The frontend uses Jinja templates to render dynamic content. Bootstrap provides responsive layout and styling, while custom CSS refines the user interface.
 
-JavaScript is used for:
+JavaScript is used to:
 
-- Mobile navigation toggling
-- Rendering dynamic charts using Chart.js
+- Render task statistics using Chart.js
+- Handle minor UI interactions
 
-Task statistics are passed from Flask to JavaScript safely using Jinja’s `tojson` filter.
+Data is passed safely from Flask to JavaScript using Jinja’s `tojson` filter.
+
+---
+
+## Configuration
+
+The contact form submits messages to a Google Sheet via a Google Apps Script endpoint.
+
+Before running the application, set the following environment variable:
+
+- `GOOGLE_SCRIPT_URL`: The deployed Google Apps Script Web App URL
+
+This avoids hard-coding sensitive configuration values in the source code.
 
 ---
 
 ## Design Decisions
 
-One key design decision was using a status field instead of a simple completed boolean. This allows the application to support multiple stages of task progress and makes the project more scalable.
+A multi-state status system was chosen instead of a simple completed flag to better represent real-world workflows and allow future expansion.
 
-Another decision was to keep authentication out of scope. The focus of this project is task management logic, data flow, and UI clarity rather than user accounts.
+User authentication was intentionally excluded to keep the project focused on task management logic, data flow, and interface clarity, in line with the project’s scope.
 
 ---
 
@@ -100,4 +119,4 @@ Another decision was to keep authentication out of scope. The focus of this proj
 
 ## Conclusion
 
-Taskly demonstrates a complete, functional web application that integrates backend logic, database management, frontend rendering, and responsive design. It reflects the core skills taught in CS50 and provides a strong foundation for more advanced applications.
+Taskly demonstrates a complete, functional web application that integrates backend logic, database operations, templating, and responsive frontend design, reflecting the core skills taught throughout CS50 and provides a strong foundation for more advanced applications.

@@ -1,28 +1,48 @@
-{% extends "layout.html" %}
-{% block content %}
+{% extends "layout.html" %} {% block content %}
 
 <h2>About Taskly</h2>
 
 <p class="mt-3">
-Taskly is a lightweight task management system built as a CS50x final project.
-It helps users organize work into clear states and visualize progress.
+  Taskly is a lightweight task management system built as a CS50x final project.
+  It helps users organize work into clear states and visualize progress.
 </p>
 
-<hr class="my-4">
+<hr class="my-4" />
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <h4>Contact</h4>
 
-<h4>Contact</h4>
+    <form action="/contact" method="post">
+      <div class="mb-3">
+        <input
+          required
+          type="text"
+          class="form-control"
+          name="name"
+          placeholder="Your name"
+        />
+      </div>
+      <div class="mb-3">
+        <input
+          required
+          type="email"
+          class="form-control"
+          name="email"
+          placeholder="Your email"
+        />
+      </div>
+      <div class="mb-3">
+        <textarea
+          required
+          class="form-control"
+          rows="4"
+          name="message"
+          placeholder="Message"
+        ></textarea>
+      </div>
+      <button class="btn btn-primary">Send</button>
+    </form>
+  </div>
 
-<form>
-  <div class="mb-3">
-    <input type="text" class="form-control" placeholder="Your name">
-  </div>
-  <div class="mb-3">
-    <input type="email" class="form-control" placeholder="Your email">
-  </div>
-  <div class="mb-3">
-    <textarea class="form-control" rows="4" placeholder="Message"></textarea>
-  </div>
-  <button class="btn btn-primary" disabled>Send (demo)</button>
-</form>
-
-{% endblock %}
+  {% endblock %}
+</div>
