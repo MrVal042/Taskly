@@ -1,14 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for
-import os
 import requests
 import sqlite3
-from helper import apology
+from helper import DB_NAME, SCRIPT_URL, apology, get_task_stats, group_tasks_by_status
 
 
 app = Flask(__name__)
-DB_NAME = "task.db"
 
-# ---------- DB ----------
+# ---------- Initialize DB ----------
 def init_db():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
@@ -26,42 +24,7 @@ def init_db():
 
 init_db()
 
-# ---------- Helpers ----------
-def get_all_tasks():
-    conn = sqlite3.connect(DB_NAME)
-    c = conn.cursor()
-    c.execute("""
-        SELECT id, title, category, status, created_at
-        FROM tasks
-        ORDER BY created_at DESC
-    """)
-    rows = c.fetchall()
-    conn.close()
-    return rows
 
-def group_tasks_by_status():
-    grouped = {
-        "backlog": [],
-        "pending": [],
-        "in-progress": [],
-        "completed": []
-    }
-
-    for t in get_all_tasks():
-        task = {
-            "id": t[0],
-            "title": t[1],
-            "category": t[2],
-            "status": t[3],
-            "created_at": t[4]
-        }
-        grouped[t[3]].append(task)
-
-    return grouped
-
-def get_task_stats():
-    grouped = group_tasks_by_status()
-    return {k: len(v) for k, v in grouped.items()}
 
 # ---------- Routes ----------
 @app.route("/")
@@ -136,8 +99,7 @@ def contact():
     if not name or not email or not message:
         return apology("all fields required", 403)
 
-    script_url = os.environ.get("GOOGLE_SCRIPT_URL")
-    if not script_url:
+    if not SCRIPT_URL:
         return apology("service not configured", 500)
 
     payload = {
@@ -148,7 +110,7 @@ def contact():
 
     try:
         response = requests.post(
-            script_url,
+            SCRIPT_URL,
             json=payload,
             timeout=5
         )
