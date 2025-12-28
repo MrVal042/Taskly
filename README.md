@@ -31,6 +31,28 @@ Users can create tasks, assign optional categories, update task status across pr
 
 ---
 
+## Screenshots
+
+### Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+### Projects Overview
+
+![Projects](screenshots/projects.png)
+
+### Add Task
+
+![Add Task](screenshots/add-task.png)
+
+### About and contact
+
+![Add Task](screenshots/about-and-contact.png)
+
+### Mobile View
+
+![Add Task](screenshots/mobile.png)
+
 ## Project Structure
 
 ```bash
